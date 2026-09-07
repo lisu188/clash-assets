@@ -1,53 +1,72 @@
-name: Manual page previews
+name: Validate manual transcription
 
 on:
   push:
     branches: [work/manual-visual-transcription]
-    paths:
-      - Manual.pdf
-      - .github/workflows/manual-preview.yml
+    paths: [Manual.md]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  render:
+  validate:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install PDF renderer
-        run: python -m pip install PyMuPDF==1.26.4
-      - name: Render source pages without OCR
+      - name: Check coverage and source integrity
         run: |
-          python - <<'PY'
+          python3 - <<'PY'
           import hashlib
           import json
+          import re
           import shutil
           from pathlib import Path
-          import fitz
 
-          source = Path('Manual.pdf')
-          output = Path('manual-preview')
+          source = Path('Manual.pdf').read_bytes()
+          data = Path('Manual.md').read_bytes()
+          text = data.decode('utf-8')
+          source_blob = hashlib.sha1(b'blob ' + str(len(source)).encode() + b'\0' + source).hexdigest()
+          assert source_blob == '868b0bd1e82d3647e272af9b686507ea0c6ad97c', 'Source PDF changed'
+          assert re.findall(r'^## Printed page (\d+)$', text, re.M) == [str(n) for n in range(1, 23)], 'Missing, duplicated, or reordered printed pages'
+          assert len(re.findall(r'^## ', text, re.M)) == 24, 'Expected covers plus 22 printed pages'
+          assert text.count('Source: [PDF page') == 24, 'Missing source links'
+          assert '\ufffd' not in text, 'Invalid replacement characters'
+          assert text.count('**') % 2 == 0, 'Unbalanced emphasis'
+          coverage = [{'pdf_page': 1, 'printed_page': None, 'side': 'full', 'section': 'Front cover'}]
+          for number in range(1, 23):
+              page = (number + 1) // 2 + 1
+              side = 'left' if number % 2 else 'right'
+              section = text.split(f'## Printed page {number}\n')[1].split('\n## ')[0]
+              assert f'PDF page {page}, {side}' in section
+              assert f'Manual.pdf#page={page}' in section
+              assert len(section) > 300
+              coverage.append({'pdf_page': page, 'printed_page': number, 'side': side, 'section': f'Printed page {number}'})
+          coverage.append({'pdf_page': 13, 'printed_page': None, 'side': 'full', 'section': 'Back cover'})
+          metadata = {
+              'schema_version': 1,
+              'title': 'Clash - English manual',
+              'language': 'en',
+              'source': {'path': 'Manual.pdf', 'git_blob_sha1': source_blob, 'sha256': hashlib.sha256(source).hexdigest(), 'bytes': len(source), 'pdf_pages': 13, 'printed_pages': 22, 'embedded_text_characters': 0},
+              'transcription': {'path': 'Manual.md', 'method': 'model-based visual reading of all rendered PDF pages and enlarged figure crops', 'ocr_engine': None, 'source_text_layer_used': False, 'date': '2026-09-07', 'status': 'main text complete; small or obscured screenshot text limitations marked inline', 'sha256': hashlib.sha256(data).hexdigest(), 'bytes': len(data), 'whitespace_delimited_words_including_editorial_material': len(text.split())},
+              'normalization': ['Preserve original wording, spelling, grammar, capitalization, and historical information where legible.', 'Join line-wrap hyphenation; represent layout and tables in Markdown.', 'Keep printed page boundaries and link each section to its scanned PDF page.', 'Label editorial observations and unreadable or obscured figure details as Transcription note.'],
+              'validation': {'source_git_blob_unchanged': True, 'utf8_valid': True, 'printed_page_sequence_complete': True, 'all_24_source_links_checked': True, 'all_13_pdf_pages_visually_read': True, 'independent_human_proofread': False, 'character_accuracy_measured': False},
+              'coverage': coverage,
+              'editorial_notes': re.findall(r'\*\*\[Transcription note: (.*?)\]\*\*', text, re.S),
+              'rights': 'Original copyright notices retained. No license for the source material is granted by this transcription.'
+          }
+          output = Path('manual-transcription-checked')
           output.mkdir()
-          shutil.copy2(source, output / source.name)
-          document = fitz.open(source)
-          pages = []
-          for number, page in enumerate(document, 1):
-              filename = f'page-{number:03d}.png'
-              page.get_pixmap(dpi=170, alpha=False).save(output / filename)
-              pages.append({'pdf_page': number, 'image': filename, 'width_pt': page.rect.width, 'height_pt': page.rect.height, 'embedded_text_characters': len(page.get_text())})
-          metadata = {'source': str(source), 'sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'page_count': len(document), 'method': 'PDF rendering only; no OCR engine', 'pages': pages}
-          (output / 'manifest.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
-          print(json.dumps(metadata, indent=2))
+          shutil.copy2('Manual.md', output / 'Manual.md')
+          (output / 'Manual.ocr.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+          print('PASS: source PDF unchanged; 22 printed pages and two covers; 24 matching source links; UTF-8 and structural checks.')
+          print('Markdown SHA-256:', metadata['transcription']['sha256'])
+          print('Markdown bytes:', len(data))
           PY
       - uses: actions/upload-artifact@v4
         with:
-          name: manual-visual-pages
-          path: manual-preview/
+          name: manual-transcription-checked
+          path: manual-transcription-checked/
           if-no-files-found: error
           retention-days: 7
