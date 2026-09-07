@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "title": "Clash - English manual",
+  "language": "en",
+  "source": {
+    "path": "Manual.pdf",
+    "git_blob_sha1": "868b0bd1e82d3647e272af9b686507ea0c6ad97c",
+    "sha256": "a968ef03e5f8b1809ef4f1d77e5d835dbb9b5f5d5236dda308e5d8e1bf81bc97",
+    "bytes": 12119487,
+    "pdf_pages": 13,
+    "printed_pages": 22,
+    "embedded_text_characters": 0
+  },
+  "transcription": {
+    "path": "Manual.md",
+    "method": "model-based visual reading of all rendered PDF pages and enlarged figure crops",
+    "ocr_engine": null,
+    "source_text_layer_used": false,
+    "date": "2026-09-07",
+    "status": "main text complete; small or obscured screenshot text limitations marked inline",
+    "sha256": "75119c4fbd48cecbc53cdd2f1002010bd59d4547b76cb056b0ad147f2ca6d2c9",
+    "bytes": 68464,
+    "whitespace_delimited_words_including_editorial_material": 11524
+  },
+  "normalization": [
+    "Preserve original wording, spelling, grammar, capitalization, and historical information where legible.",
+    "Join line-wrap hyphenation; represent layout and tables in Markdown.",
+    "Keep printed page boundaries and link each section to its scanned PDF page.",
+    "Label editorial observations and unreadable or obscured figure details as Transcription note."
+  ],
+  "validation": {
+    "source_git_blob_unchanged": true,
+    "utf8_valid": true,
+    "printed_page_sequence_complete": true,
+    "all_24_source_links_checked": true,
+    "all_13_pdf_pages_visually_read": true,
+    "independent_human_proofread": false,
+    "character_accuracy_measured": false
+  },
+  "coverage": [
+    {
+      "pdf_page": 1,
+      "printed_page": null,
+      "side": "full",
+      "section": "Front cover"
+    },
+    {
+      "pdf_page": 2,
+      "printed_page": 1,
+      "side": "left",
+      "section": "Printed page 1"
+    },
+    {
+      "pdf_page": 2,
+      "printed_page": 2,
+      "side": "right",
+      "section": "Printed page 2"
+    },
+    {
+      "pdf_page": 3,
+      "printed_page": 3,
+      "side": "left",
+      "section": "Printed page 3"
+    },
+    {
+      "pdf_page": 3,
+      "printed_page": 4,
+      "side": "right",
+      "section": "Printed page 4"
+    },
+    {
+      "pdf_page": 4,
+      "printed_page": 5,
+      "side": "left",
+      "section": "Printed page 5"
+    },
+    {
+      "pdf_page": 4,
+      "printed_page": 6,
+      "side": "right",
+      "section": "Printed page 6"
+    },
+    {
+      "pdf_page": 5,
+      "printed_page": 7,
+      "side": "left",
+      "section": "Printed page 7"
+    },
+    {
+      "pdf_page": 5,
+      "printed_page": 8,
+      "side": "right",
+      "section": "Printed page 8"
+    },
+    {
+      "pdf_page": 6,
+      "printed_page": 9,
+      "side": "left",
+      "section": "Printed page 9"
+    },
+    {
+      "pdf_page": 6,
+      "printed_page": 10,
+      "side": "right",
+      "section": "Printed page 10"
+    },
+    {
+      "pdf_page": 7,
+      "printed_page": 11,
+      "side": "left",
+      "section": "Printed page 11"
+    },
+    {
+      "pdf_page": 7,
+      "printed_page": 12,
+      "side": "right",
+      "section": "Printed page 12"
+    },
+    {
+      "pdf_page": 8,
+      "printed_page": 13,
+      "side": "left",
+      "section": "Printed page 13"
+    },
+    {
+      "pdf_page": 8,
+      "printed_page": 14,
+      "side": "right",
+      "section": "Printed page 14"
+    },
+    {
+      "pdf_page": 9,
+      "printed_page": 15,
+      "side": "left",
+      "section": "Printed page 15"
+    },
+    {
+      "pdf_page": 9,
+      "printed_page": 16,
+      "side": "right",
+      "section": "Printed page 16"
+    },
+    {
+      "pdf_page": 10,
+      "printed_page": 17,
+      "side": "left",
+      "section": "Printed page 17"
+    },
+    {
+      "pdf_page": 10,
+      "printed_page": 18,
+      "side": "right",
+      "section": "Printed page 18"
+    },
+    {
+      "pdf_page": 11,
+      "printed_page": 19,
+      "side": "left",
+      "section": "Printed page 19"
+    },
+    {
+      "pdf_page": 11,
+      "printed_page": 20,
+      "side": "right",
+      "section": "Printed page 20"
+    },
+    {
+      "pdf_page": 12,
+      "printed_page": 21,
+      "side": "left",
+      "section": "Printed page 21"
+    },
+    {
+      "pdf_page": 12,
+      "printed_page": 22,
+      "side": "right",
+      "section": "Printed page 22"
+    },
+    {
+      "pdf_page": 13,
+      "printed_page": null,
+      "side": "full",
+      "section": "Back cover"
+    }
+  ],
+  "editorial_notes": [
+    "The cover also shows a United Kingdom flag and an illustrated armoured face.",
+    "These numbers label the main-map screenshot. Small in-game statistics in the screenshot are not reliably legible and are not reconstructed.",
+    "The building-information illustration shows, by legend number: 1 = 100; 2 = 5; 3 = 140; 4 = 0; 5 = 0; 6 = 100; 7 = 0; 8 = 1; 9 = 0. Its name is partly covered by the numbered callouts.",
+    "The unit-information illustration shows AP 36, morale 6, tiredness 0, attack-related values 18 and 5, and defence 5. The unit name and life-energy value are partly obscured by callouts and are not reconstructed.",
+    "The castle-yard screenshot visibly labels 1–7 and 9; the printed legend also lists 8 (school), but an 8 callout is not visible in this screenshot. Small toolbar values are not reliably legible.",
+    "The barracks screenshot labels the selected unit “builder” and shows 0 gold and a 100 value under an occupied unit slot. Some smaller statistics are obscured or unclear.",
+    "Readable text in the production screenshot includes “light infantry”, “Halberdman”, “Heavy cavalry”, “Troll”, and “3 turns until the end of production.” Small numeric interface values are not all reliably legible.",
+    "The court screenshot’s message reads: “The Queen is well and is willing to serve you, but she is not certain of her feelings towards you.” Player names in the small toolbar are not reliably transcribed.",
+    "The village screenshot includes “Tax”, population 132 with an upward arrow, satisfaction 88%, gold 200, tax 4.0, and zeros for income and the amounts to transfer. The destination name is unclear.",
+    "Continuation of the sentence from printed page 16.",
+    "Continuation of the sentence from printed page 17.",
+    "The battle screenshot’s numbered callouts correspond to the legends above. Its small unit names and some numeric statistics are not reliably legible.",
+    "Continuation of the shooting instructions from printed page 20.",
+    "Continuation of the siege description from printed page 21."
+  ],
+  "rights": "Original copyright notices retained. No license for the source material is granted by this transcription."
+}
