@@ -1,0 +1,53 @@
+name: Manual page previews
+
+on:
+  push:
+    branches: [work/manual-visual-transcription]
+    paths:
+      - Manual.pdf
+      - .github/workflows/manual-preview.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install PDF renderer
+        run: python -m pip install PyMuPDF==1.26.4
+      - name: Render source pages without OCR
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import shutil
+          from pathlib import Path
+          import fitz
+
+          source = Path('Manual.pdf')
+          output = Path('manual-preview')
+          output.mkdir()
+          shutil.copy2(source, output / source.name)
+          document = fitz.open(source)
+          pages = []
+          for number, page in enumerate(document, 1):
+              filename = f'page-{number:03d}.png'
+              page.get_pixmap(dpi=170, alpha=False).save(output / filename)
+              pages.append({'pdf_page': number, 'image': filename, 'width_pt': page.rect.width, 'height_pt': page.rect.height, 'embedded_text_characters': len(page.get_text())})
+          metadata = {'source': str(source), 'sha256': hashlib.sha256(source.read_bytes()).hexdigest(), 'page_count': len(document), 'method': 'PDF rendering only; no OCR engine', 'pages': pages}
+          (output / 'manifest.json').write_text(json.dumps(metadata, indent=2) + '\n', encoding='utf-8')
+          print(json.dumps(metadata, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: manual-visual-pages
+          path: manual-preview/
+          if-no-files-found: error
+          retention-days: 7
