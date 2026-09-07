@@ -1,0 +1,48 @@
+name: Validate asset tooling
+
+on:
+  push:
+    branches: [main, import/clash-gog-32003]
+    paths:
+      - tools/**
+      - tests/**
+      - sources/**
+      - .github/workflows/validate-assets.yml
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Verify source inventory and checked-in bytes
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          root = Path('sources/gog-32003')
+          manifest = json.loads((root / 'manifest.json').read_text())
+          validation = json.loads((root / 'validation.json').read_text())
+          package = json.loads((root / 'package.json').read_text())
+          canonical = json.dumps(manifest, sort_keys=True, separators=(',', ':')).encode()
+          assert hashlib.sha256(canonical).hexdigest() == validation['canonical_manifest_sha256']
+          files = manifest['runtime']['files']
+          assert len(files) == len({entry['path'] for entry in files}) == 60
+          assert sum(entry['size'] for entry in files) == manifest['runtime']['total_bytes'] == 517940933
+          assert len(manifest['split_archive']['parts']) == 19
+          assert sum(entry['size'] for entry in manifest['split_archive']['parts']) == manifest['split_archive']['archive']['size']
+          assert package['runtime_bytes'] == manifest['runtime']['total_bytes']
+          data = Path('tools/clash_assets.py').read_bytes()
+          assert hashlib.sha1(b'blob ' + str(len(data)).encode() + b'\0' + data).hexdigest() == '71eedafc68d4a34c7b37d17cd1cca788300b02ed'
+          print('Source metadata and importer match the locally tested import')
+          PY

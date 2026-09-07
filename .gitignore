@@ -1,0 +1,6 @@
+/runtime/
+/dist/
+/setup_clash*
+/*.zip
+__pycache__/
+*.py[cod]

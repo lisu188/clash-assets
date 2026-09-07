@@ -1,0 +1,27 @@
+name: Prepare import tools
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  extraction-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download upstream innoextract 1.9 binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p tools
+          curl --fail --location --retry 3 https://constexpr.org/innoextract/files/innoextract-1.9-linux.tar.xz -o tools/innoextract-1.9-linux.tar.xz
+          echo '008efe5011476ccc4aae17c3e22038b5a1bc5c7aad2b9d4d869537bf3874d21f  tools/innoextract-1.9-linux.tar.xz' | sha256sum --check
+          sha256sum tools/innoextract-1.9-linux.tar.xz > tools/SHA256SUMS
+      - name: Package extraction tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: clash-import-tools
+          path: tools/
+          retention-days: 7
+          if-no-files-found: error
