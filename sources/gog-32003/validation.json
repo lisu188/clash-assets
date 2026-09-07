@@ -1,0 +1,17 @@
+{
+  "validated_on": "2026-09-07",
+  "archive_volumes_verified": 19,
+  "seven_zip_headers_crc_valid": true,
+  "innoextract_exit_code": 0,
+  "runtime_files_verified": 60,
+  "runtime_bytes_verified": 517940933,
+  "zip_crc_test_passed": true,
+  "zip_unpack_and_sha256_verification_passed": true,
+  "independent_installer_reextraction_passed": true,
+  "unit_tests_passed": 10,
+  "windows_setup_executed": false,
+  "game_launch_tested": false,
+  "runtime_binary_uploaded_to_github": false,
+  "upload_status": "Blocked: GitHub connector has no local binary upload action; attempted file staging failed with UNREGISTERED_FILE_REFERENCE. No Drive file was created.",
+  "canonical_manifest_sha256": "0dea266982d3dd8f91e0b53ca8530789bd9ab71bbd8b8ddec9e5c54e2d3b9270"
+}
