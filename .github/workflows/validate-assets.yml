@@ -24,6 +24,25 @@ jobs:
           python-version: '3.12'
       - name: Unit tests
         run: python -m unittest discover -s tests -v
+      - name: Verify committed runtime LFS pointers
+        run: |
+          python - <<'PY'
+          import json
+          import subprocess
+          from pathlib import Path
+          manifest = json.loads(Path('sources/gog-32003/manifest.json').read_text())
+          prefix = 'runtime/gog-32003/'
+          expected = {prefix + entry['path']: entry for entry in manifest['runtime']['files']}
+          tracked = subprocess.check_output(['git', 'ls-tree', '-r', '--name-only', 'HEAD', '--', prefix], text=True).splitlines()
+          assert set(tracked) == set(expected), 'Committed runtime paths differ from the manifest'
+          for path, entry in expected.items():
+              pointer = subprocess.check_output(['git', 'show', 'HEAD:' + path])
+              canonical = ('version https://git-lfs.github.com/spec/v1\n'
+                           f"oid sha256:{entry['sha256']}\n"
+                           f"size {entry['size']}\n").encode()
+              assert pointer == canonical, f'LFS pointer differs from the manifest: {path}'
+          print(f'All {len(expected)} runtime LFS pointers match the source manifest')
+          PY
       - name: Verify source inventory and checked-in bytes
         run: |
           python - <<'PY'

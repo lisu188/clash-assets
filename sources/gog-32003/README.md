@@ -6,7 +6,7 @@ The 19 user-supplied 7z volumes were joined and verified on 2026-09-07. The arch
 
 The prepared runtime contains **60 original files, 517,940,933 bytes**, and the empty `gfx/cache` and `save` directories. A verified ZIP, `clash-gog-32003-runtime.zip`, was produced (373,319,846 bytes).
 
-**The runtime binary ZIP has NOT been uploaded to this repository or a GitHub release.** The connected GitHub tool does not accept local binary uploads; a file-staging attempt also failed before creating any Drive file. The ZIP was delivered separately in the originating chat. This directory records the completed extraction, not a completed binary publication. `validation.json` is a historical import report.
+All 60 runtime files are now tracked under `runtime/gog-32003/` using Git LFS. They were extracted again from the supplied installer on 2026-09-08 and verified against every size and SHA-256 in `manifest.json`. The separate ZIP has not been uploaded as a release asset. `validation.json` remains the historical 2026-09-07 import report; its upload status predates this Git LFS import.
 
 ## Contents
 
@@ -28,10 +28,27 @@ The installer manual is byte-identical to the repository's existing `Manual.pdf`
 
 Python 3.11 or later is required. Run commands from the repository root.
 
+### Use the checked-in runtime
+
+Install Git LFS, then download the original files and recreate the empty directories, which Git cannot track:
+
+```console
+git lfs install --local
+git lfs pull
+mkdir -p runtime/gog-32003/gfx/cache runtime/gog-32003/save
+python tools/clash_assets.py verify runtime/gog-32003
+```
+
+The Git LFS pointers record the same sizes and SHA-256 values as the runtime manifest. CI checks all 60 pointers against that manifest without downloading the binaries. Local verification checks the actual downloaded file bytes. Keep this reference copy unchanged; use a separate copy for game saves and modified settings.
+
+### Unpack a separate reference copy
+
+The existing importer can also create a fresh reference copy from the previously prepared ZIP:
+
 ```console
 python tools/clash_assets.py verify-package /path/to/clash-gog-32003-runtime.zip
-python tools/clash_assets.py unpack /path/to/clash-gog-32003-runtime.zip --destination runtime/gog-32003
-python tools/clash_assets.py verify runtime/gog-32003
+python tools/clash_assets.py unpack /path/to/clash-gog-32003-runtime.zip --destination runtime/gog-32003-reference
+python tools/clash_assets.py verify runtime/gog-32003-reference
 ```
 
 `unpack` requires only the Python standard library. It validates the complete ZIP checksum, rejects unexpected paths, verifies each extracted file and refuses to overwrite an existing destination. `verify` is intended for an unchanged reference copy; saves or modified settings will correctly be reported as differences.
@@ -39,18 +56,18 @@ python tools/clash_assets.py verify runtime/gog-32003
 To reproduce from the original installer, install [innoextract](https://constexpr.org/innoextract/) and run:
 
 ```console
-python tools/clash_assets.py extract "setup_clash_1.0_(32003).exe" --destination runtime/gog-32003
+python tools/clash_assets.py extract "setup_clash_1.0_(32003).exe" --destination runtime/gog-32003-reference
 ```
 
 The first `.001` volume can also be supplied with all 19 parts beside it. That path additionally requires `7z` on PATH (or a standard Windows 7-Zip installation). Volume names may have a different common prefix, but their numbers, bytes and checksums must match the manifest. `--innoextract /path/to/innoextract` selects an explicit executable.
 
 This prepares the original runtime directory. It does **not** install DirectX, register codecs, create registry entries or shortcuts, execute GOG installer scripts, or prove that the game launches. For a native Windows installation, use the original EXE.
 
-## Finish the GitHub publication
+## Git LFS storage and optional ZIP publication
 
-`Data/MUSIC.RES` is 112,388,864 bytes, above GitHub's ordinary 100 MiB file limit. Do not commit the runtime directory as regular Git blobs. Publish the verified ZIP as a release asset instead; the runtime and ZIP outputs are ignored by Git.
+`Data/MUSIC.RES` is 112,388,864 bytes, above GitHub's ordinary 100 MiB file limit. `.gitattributes` therefore tracks the entire `runtime/gog-32003/` tree with Git LFS. Install Git LFS before staging runtime files so their content is stored as LFS objects. Other runtime directories and ZIP outputs remain ignored by Git.
 
-With GitHub CLI installed and authenticated for this repository:
+Publishing the separately prepared ZIP as a release asset is optional. With that ZIP available and GitHub CLI installed and authenticated for this repository:
 
 ```console
 python tools/clash_assets.py publish /path/to/clash-gog-32003-runtime.zip
