@@ -1,4 +1,5 @@
-/runtime/
+/runtime/*
+!/runtime/gog-32003/
 /dist/
 /setup_clash*
 /*.zip

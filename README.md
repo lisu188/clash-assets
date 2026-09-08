@@ -24,9 +24,9 @@ Validation checked the unchanged source PDF, valid UTF-8, the complete printed-p
 
 [Import record and instructions](sources/gog-32003/README.md) · [File manifest](sources/gog-32003/manifest.json) · [Validation report](sources/gog-32003/validation.json) · [Importer](tools/clash_assets.py)
 
-The supplied 19-part installer archive was verified and extracted into a 60-file original runtime. Its manual matches the existing PDF. The prepared ZIP is 373,319,846 bytes; the unpacked runtime is 517,940,933 bytes.
+The supplied 19-part installer archive was verified and extracted into a 60-file original runtime. All 60 files are checked in under [`runtime/gog-32003/`](runtime/gog-32003/) using Git LFS, with their original bytes verified against the manifest. Its manual matches the existing PDF. The unpacked runtime is 517,940,933 bytes.
 
-**Only the manifest, tooling and documentation are checked in. The runtime ZIP has not yet been uploaded to GitHub.** It was delivered in the originating chat; the import instructions include checksum-verified unpacking and a GitHub release publishing command. Windows setup and game launch were not executed.
+Install Git LFS and run `git lfs pull` after cloning. Follow the [checkout instructions](sources/gog-32003/README.md#use-the-checked-in-runtime) to recreate the two empty directories that Git cannot track and verify the runtime. The separately prepared ZIP has not been uploaded as a release asset. Windows setup and game launch were not executed.
 
 ## Rights
 
